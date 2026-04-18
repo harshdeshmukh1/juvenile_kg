@@ -1,0 +1,4 @@
+scrap/
+__pycache__/
+*.pyc
+.env

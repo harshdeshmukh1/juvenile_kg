@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Juvenile Justice Knowledge Graph</title>
+  <script src="https://unpkg.com/vis-network@9.1.2/dist/vis-network.min.js"></script>
+  <link href="https://unpkg.com/vis-network@9.1.2/dist/vis-network.min.css" rel="stylesheet">
+  <style>
+    body { font-family: Arial; margin: 0; padding: 10px; background: #1e1e1e; color: white; }
+    #mynetwork { width: 100%; height: 95vh; border: 1px solid #333; }
+  </style>
+</head>
+<body>
+  <h2>Juvenile Justice Knowledge Graph - Full View</h2>
+  <div id="mynetwork"></div>
+
+  <script>
+    // Paste the JSON you exported from Neo4j here
+    const graphData = { /* PASTE YOUR EXPORTED JSON HERE */ };
+
+    // Simple conversion from Neo4j format to vis.js format
+    let nodes = [];
+    let edges = [];
+
+    // Process nodes
+    graphData.forEach(item => {
+      if (item.n) {
+        let label = item.n.labels ? item.n.labels[0] : "Node";
+        nodes.push({
+          id: item.n.identity.low,
+          label: label + "\n" + (item.n.properties.title || item.n.properties.name || ""),
+          color: label === "Case" ? "#4ade80" : label === "Section" ? "#60a5fa" : "#f472b6"
+        });
+      }
+      if (item.r) {
+        edges.push({
+          from: item.r.start.low,
+          to: item.r.end.low,
+          label: item.r.type
+        });
+      }
+    });
+
+    // Render the graph
+    const container = document.getElementById('mynetwork');
+    const data = { nodes: new vis.DataSet(nodes), edges: new vis.DataSet(edges) };
+    const options = {
+      nodes: { shape: "dot", size: 20, font: { size: 12 } },
+      edges: { arrows: "to", smooth: true }
+    };
+    new vis.Network(container, data, options);
+  </script>
+</body>
+</html>
